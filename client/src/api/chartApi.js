@@ -43,6 +43,13 @@ export async function getCareerAnalysis(formData) {
   } catch (err) { handleError(err); }
 }
 
+export async function getFortuneAnalysis(formData) {
+  try {
+    const { data } = await api.post('/analyze/fortune', formData);
+    return data.data;
+  } catch (err) { handleError(err); }
+}
+
 export async function getSynastryAnalysis(person1, person2) {
   try {
     const { data } = await api.post('/analyze/synastry', { person1, person2 });

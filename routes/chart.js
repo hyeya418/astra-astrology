@@ -11,6 +11,7 @@ const { buildPersonaPrompts } = require('../src/prompts/persona');
 const { buildEnergyPrompts } = require('../src/prompts/energy');
 const { buildCareerPrompts } = require('../src/prompts/career');
 const { buildSynastryPrompts } = require('../src/prompts/synastry');
+const { buildFortunePrompts } = require('../src/prompts/fortune');
 
 // Helper: extract birth data from request body with defaults
 function extractBirthData(body) {
@@ -72,6 +73,20 @@ router.post('/analyze/career', async (req, res) => {
     const input = extractBirthData(req.body);
     const chart = calcNatalChart(input);
     const { system, user } = buildCareerPrompts(chart);
+    const result = await callClaude(system, user);
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /chart/analyze/fortune — 7가지 통합 운세
+router.post('/analyze/fortune', async (req, res) => {
+  try {
+    const input = extractBirthData(req.body);
+    const chart = calcNatalChart(input);
+    const transits = calcTransits(chart);
+    const { system, user } = buildFortunePrompts(chart, transits);
     const result = await callClaude(system, user);
     res.json({ success: true, data: result });
   } catch (err) {
