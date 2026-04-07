@@ -67,7 +67,7 @@ export default function Landing() {
           transition={{ duration: 0.8, delay: 0.5 }}
           style={{
             fontFamily: 'var(--font-body)',
-            fontSize: 'clamp(0.85rem, 2.5vw, 1rem)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.15rem)',
             fontWeight: 300,
             letterSpacing: '0.25em',
             color: 'var(--text-muted)',
@@ -83,7 +83,7 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
           className="btn btn-outline"
-          style={{ fontSize: '0.8rem', letterSpacing: '0.2em', padding: '0.85rem 2.5rem' }}
+          style={{ fontSize: '1rem', letterSpacing: '0.15em', padding: '0.9rem 2.5rem' }}
           onClick={() => navigate('/input')}
         >
           차트 보기

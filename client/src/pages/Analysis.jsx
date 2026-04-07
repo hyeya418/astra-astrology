@@ -54,23 +54,22 @@ function FortuneSection({ section, data, index }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <span style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1rem',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
                 color: section.accent,
-                letterSpacing: '0.06em',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                fontSize: '0.7rem',
+                fontWeight: 500,
               }}>
                 {section.key}
               </span>
               {data.keyword && (
                 <span style={{
-                  fontSize: '0.68rem',
-                  padding: '1px 7px',
+                  fontSize: '0.78rem',
+                  padding: '2px 9px',
                   borderRadius: 20,
                   border: `1px solid ${section.accent}55`,
                   color: section.accent,
-                  letterSpacing: '0.04em',
                 }}>
                   {data.keyword}
                 </span>
@@ -79,10 +78,10 @@ function FortuneSection({ section, data, index }) {
             {data.title && (
               <div style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.05rem',
+                fontSize: '1.25rem',
                 color: 'var(--text)',
-                marginTop: '0.15rem',
-                lineHeight: 1.4,
+                marginTop: '0.2rem',
+                lineHeight: 1.35,
               }}>
                 {data.title}
               </div>
@@ -115,20 +114,20 @@ function FortuneSection({ section, data, index }) {
             <div style={{ padding: '0 1.25rem 1.25rem' }}>
               <p style={{
                 color: 'var(--text)',
-                lineHeight: 1.85,
-                fontSize: '0.93rem',
+                lineHeight: 1.9,
+                fontSize: '1rem',
                 marginBottom: data.advice ? '1rem' : 0,
               }}>
                 {data.content}
               </p>
               {data.advice && (
                 <div style={{
-                  padding: '0.7rem 1rem',
+                  padding: '0.85rem 1.1rem',
                   background: `${section.accent}0f`,
                   border: `1px solid ${section.accent}33`,
                   borderRadius: 8,
                   color: section.accent,
-                  fontSize: '0.875rem',
+                  fontSize: '1rem',
                   fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
                 }}>
@@ -347,7 +346,7 @@ export default function Analysis() {
               border: activeTab === tab.id ? '1px solid rgba(201,168,76,0.3)' : '1px solid transparent',
               borderRadius: 6,
               color: activeTab === tab.id ? 'var(--gold)' : 'var(--text-muted)',
-              fontSize: '0.85rem',
+              fontSize: '1rem',
               cursor: 'pointer',
               transition: 'all var(--transition)',
             }}>
