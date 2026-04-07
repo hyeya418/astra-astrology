@@ -46,30 +46,48 @@ function FortuneSection({ section, data, index }) {
           border: 'none',
           cursor: 'pointer',
           gap: '0.75rem',
+          textAlign: 'left',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '1.1rem', color: section.accent }}>{section.icon}</span>
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.1rem',
-            color: 'var(--text)',
-            letterSpacing: '0.04em',
-          }}>
-            {section.key}
-          </span>
-          {data.keyword && (
-            <span style={{
-              fontSize: '0.7rem',
-              padding: '2px 8px',
-              borderRadius: 20,
-              border: `1px solid ${section.accent}55`,
-              color: section.accent,
-              letterSpacing: '0.06em',
-            }}>
-              {data.keyword}
-            </span>
-          )}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flex: 1 }}>
+          <span style={{ fontSize: '1.1rem', color: section.accent, marginTop: '2px', flexShrink: 0 }}>{section.icon}</span>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1rem',
+                color: section.accent,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                fontSize: '0.7rem',
+              }}>
+                {section.key}
+              </span>
+              {data.keyword && (
+                <span style={{
+                  fontSize: '0.68rem',
+                  padding: '1px 7px',
+                  borderRadius: 20,
+                  border: `1px solid ${section.accent}55`,
+                  color: section.accent,
+                  letterSpacing: '0.04em',
+                }}>
+                  {data.keyword}
+                </span>
+              )}
+            </div>
+            {data.title && (
+              <div style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.05rem',
+                color: 'var(--text)',
+                marginTop: '0.15rem',
+                lineHeight: 1.4,
+              }}>
+                {data.title}
+              </div>
+            )}
+          </div>
         </div>
         <span style={{
           color: 'var(--text-muted)',
@@ -77,6 +95,7 @@ function FortuneSection({ section, data, index }) {
           transition: 'transform 0.3s',
           transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
           display: 'inline-block',
+          flexShrink: 0,
         }}>
           ▾
         </span>
