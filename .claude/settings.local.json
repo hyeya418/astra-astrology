@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(node test/natalChart.test.js)",
+      "Bash(node -e \":*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm install:*)",
+      "Bash(npm create:*)",
+      "Bash(npx create-vite@latest client --template react)",
+      "Bash(npm run:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000 \\\\|:5173 \")",
+      "Bash(findstr LISTENING)",
+      "Bash(findstr \"3000\")",
+      "Bash(findstr \"5173\")",
+      "Bash(findstr \":3000\")"
+    ]
+  }
+}
