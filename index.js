@@ -3,9 +3,21 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const { getSwe } = require('./src/natalChart');
 
 const app = express();
+
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://astra-astrology-rust.vercel.app',
+    'https://astra-astrology-git-main-hyeya418s-projects.vercel.app',
+    /\.vercel\.app$/,
+  ],
+  methods: ['GET', 'POST'],
+}));
+
 app.use(express.json());
 
 // Initialize Swiss Ephemeris once at startup
