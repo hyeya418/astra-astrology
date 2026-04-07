@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/chart`
+  : '/chart';
+
 const api = axios.create({
-  baseURL: '/chart',
-  timeout: 60000,
+  baseURL: BASE_URL,
+  timeout: 120000,
   headers: { 'Content-Type': 'application/json' },
 });
 
