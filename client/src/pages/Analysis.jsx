@@ -266,23 +266,20 @@ export default function Analysis() {
     const fd = JSON.parse(stored);
     setFormData(fd);
 
-    const cacheKey = `fortune_${fd.name || 'noname'}_${fd.year}_${fd.month}_${fd.day}_${fd.hour}_${fd.minute}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) {
-      setFortune(JSON.parse(cached));
-      return;
-    }
+    // Older fortune results were cached in sessionStorage and could mask prompt changes.
+    Object.keys(sessionStorage)
+      .filter((key) => key.startsWith('fortune_'))
+      .forEach((key) => sessionStorage.removeItem(key));
 
-    fetchFortune(fd, cacheKey);
+    fetchFortune(fd);
   }, [navigate]);
 
-  async function fetchFortune(fd, cacheKey) {
+  async function fetchFortune(fd) {
     setFortuneLoading(true);
     setFortuneError(null);
     try {
       const result = await getFortuneAnalysis(fd);
       setFortune(result);
-      if (cacheKey) sessionStorage.setItem(cacheKey, JSON.stringify(result));
     } catch (err) {
       setFortuneError(err.message);
     } finally {
@@ -367,10 +364,7 @@ export default function Analysis() {
                   <button
                     className="btn btn-outline"
                     style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}
-                    onClick={() => {
-                      const ck = formData ? `fortune_${formData.name || 'noname'}_${formData.year}_${formData.month}_${formData.day}_${formData.hour}_${formData.minute}` : null;
-                      fetchFortune(formData, ck);
-                    }}
+                    onClick={() => fetchFortune(formData)}
                   >
                     다시 시도
                   </button>
