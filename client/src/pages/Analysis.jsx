@@ -153,7 +153,7 @@ function SynastryForm({ onSubmit, loading }) {
   }
 
   const fields = [
-    { label: '이름', key: 'name', type: 'text', placeholder: '예: 김지혜' },
+    { label: '이름', key: 'name', type: 'text'},
     { label: '생년월일', key: 'date', type: 'date' },
     { label: '출생 시간', key: 'time', type: 'time' },
     { label: '출생지', key: 'location', type: 'text', placeholder: '예: 서울 강남구' },

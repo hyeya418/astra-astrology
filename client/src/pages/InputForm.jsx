@@ -140,7 +140,6 @@ export default function InputForm() {
                 type="text"
                 value={form.name}
                 onChange={set('name')}
-                placeholder="예: 김지혜"
                 required
               />
             </div>

@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 const Groq = require('groq-sdk');
 
@@ -9,6 +9,43 @@ function getClient() {
     _client = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return _client;
+}
+
+function sanitizeKoreanText(text) {
+  if (typeof text !== 'string') return text;
+
+  return text
+    .replace(/[A-Za-z]+/g, ' ')
+    .replace(/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/g, ' ')
+    .replace(/[\u3040-\u30FF\u31F0-\u31FF]/g, ' ')
+    .replace(/[^\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F0-9\s.,!?~:;()%\-\[\]{}"'&/]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,!?~:;)%\]\}])/g, '$1')
+    .replace(/([\[\{(])\s+/g, '$1')
+    .trim();
+}
+
+function sanitizeResponsePayload(value, keyPath = []) {
+  if (Array.isArray(value)) {
+    return value.map((item, index) => sanitizeResponsePayload(item, keyPath.concat(index)));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [key, sanitizeResponsePayload(nestedValue, keyPath.concat(key))]),
+    );
+  }
+
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const currentKey = String(keyPath[keyPath.length - 1] || '');
+  if (currentKey === 'level') {
+    return value;
+  }
+
+  return sanitizeKoreanText(value);
 }
 
 /**
@@ -23,7 +60,7 @@ async function callClaude(system, user) {
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: system },
-        { role: 'user',   content: user },
+        { role: 'user', content: user },
       ],
       temperature: 0.8,
       max_tokens: 4096,
@@ -31,14 +68,14 @@ async function callClaude(system, user) {
 
     const text = completion.choices[0].message.content.trim();
 
-    // Strip markdown code blocks if present
     const jsonText = text
       .replace(/^```json\s*/i, '')
       .replace(/^```\s*/i, '')
       .replace(/\s*```$/i, '')
       .trim();
 
-    return JSON.parse(jsonText);
+    const parsed = JSON.parse(jsonText);
+    return sanitizeResponsePayload(parsed);
   }
 
   try {
@@ -52,4 +89,4 @@ async function callClaude(system, user) {
   }
 }
 
-module.exports = { callClaude };
+module.exports = { callClaude, sanitizeKoreanText, sanitizeResponsePayload };
