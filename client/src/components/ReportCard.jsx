@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 function getAdviceLabel(key) {
   if (key === 'do') return '\uD558\uBA74 \uC88B\uC740 \uAC83';
@@ -6,25 +7,80 @@ function getAdviceLabel(key) {
   return key;
 }
 
+const LOADING_MESSAGES = [
+  { icon: '☕', text: '별자리를 읽는 중이에요, 잠깐만요!' },
+  { icon: '🔭', text: '행성들의 위치를 계산하고 있어요...' },
+  { icon: '✨', text: '우주가 당신의 이야기를 준비 중이에요' },
+  { icon: '🌙', text: '달빛 아래 차트를 펼치는 중이에요...' },
+  { icon: '⭐', text: 'AI가 별자리를 해석하고 있어요' },
+  { icon: '🪐', text: '행성들에게 물어보는 중이에요 ㅋㅋ' },
+  { icon: '🌌', text: '은하수를 건너는 중... 조금만 기다려요!' },
+  { icon: '🔮', text: '우주의 메시지를 받아오는 중이에요' },
+];
+
 // Loading spinner
 export function LoadingSpinner() {
+  const [msgIdx, setMsgIdx] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setMsgIdx(i => (i + 1) % LOADING_MESSAGES.length);
+        setVisible(true);
+      }, 400);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const msg = LOADING_MESSAGES[msgIdx];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '3rem' }}>
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      gap: '1.5rem', padding: '4rem 2rem',
+    }}>
       <svg
-        width="48" height="48" viewBox="0 0 48 48"
+        width="52" height="52" viewBox="0 0 48 48"
         style={{ animation: 'spin-slow 2.5s linear infinite' }}
       >
         <polygon
           points="24,4 28,18 42,18 31,27 35,42 24,33 13,42 17,27 6,18 20,18"
-          fill="none"
-          stroke="var(--gold)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
+          fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinejoin="round"
         />
       </svg>
-      <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem', letterSpacing: '0.1em' }}>
-        별자리를 읽는 중...
-      </span>
+
+      <AnimatePresence mode="wait">
+        {visible && (
+          <motion.div
+            key={msgIdx}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.35 }}
+            style={{ textAlign: 'center' }}
+          >
+            <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{msg.icon}</div>
+            <div style={{
+              color: 'var(--text-muted)',
+              fontSize: '1rem',
+              letterSpacing: '0.02em',
+              lineHeight: 1.6,
+            }}>
+              {msg.text}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div style={{
+        fontSize: '0.8rem',
+        color: 'var(--text-subtle)',
+        marginTop: '-0.5rem',
+      }}>
+        첫 분석은 최대 1분 정도 걸릴 수 있어요 🙏
+      </div>
     </div>
   );
 }
