@@ -54,7 +54,13 @@ function sanitizeResponsePayload(value, keyPath = []) {
  */
 async function callClaude(system, user, options = {}) {
   const client = getClient();
-  const { validator, repairInstruction, temperature = 0.8 } = options;
+  const {
+    validator,
+    repairInstruction,
+    temperature = 0.8,
+    maxAttempts = 4,
+    userFacingErrorMessage = '해석을 안정적으로 생성하지 못했습니다. 잠시 후 다시 시도해주세요.',
+  } = options;
 
   async function request(messages, requestTemperature) {
     const completion = await client.chat.completions.create({
@@ -91,21 +97,22 @@ async function callClaude(system, user, options = {}) {
     return sanitized;
   }
 
-  async function attempt() {
-    return request([
-      { role: 'system', content: system },
-      { role: 'user', content: user },
-    ], temperature);
-  }
+  let messages = [
+    { role: 'system', content: system },
+    { role: 'user', content: user },
+  ];
+  let currentTemperature = temperature;
+  let lastError = null;
 
-  try {
-    return await attempt();
-  } catch (err) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      const messages = [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ];
+      return await request(messages, currentTemperature);
+    } catch (err) {
+      lastError = err;
+
+      if (attempt >= maxAttempts) {
+        break;
+      }
 
       if (err.validationIssues) {
         messages.push({
@@ -119,13 +126,21 @@ ${repairInstruction || '같은 JSON 형식을 유지하되, 더 구체적이고 
 이전 응답:
 ${JSON.stringify(err.sanitized)}`,
         });
+      } else {
+        messages.push({
+          role: 'user',
+          content: `${repairInstruction || '같은 JSON 형식을 유지하되, 더 구체적이고 자연스러운 한국어로 처음부터 다시 작성하세요.'}
+
+이전 응답에는 형식 또는 문장 품질 문제가 있었습니다. 이번에는 JSON 형식을 정확히 지키고, 번역투 없이 자연스러운 한국어로만 다시 작성하세요.`,
+        });
       }
 
-      return await request(messages, 0.55);
-    } catch (retryErr) {
-      throw new Error(`Groq API JSON parse failed after retry: ${retryErr.message}`);
+      currentTemperature = 0.55;
     }
   }
+
+  console.error('Groq response generation failed:', lastError?.message || 'unknown error');
+  throw new Error(userFacingErrorMessage);
 }
 
 module.exports = { callClaude, sanitizeKoreanText, sanitizeResponsePayload };
