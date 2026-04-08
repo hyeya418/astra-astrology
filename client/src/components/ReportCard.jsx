@@ -204,7 +204,7 @@ export function CareerReport({ data }) {
       <Section label="일하는 방식" content={data.workStyle} accent="var(--violet)" />
       <Section label="최적 직군" content={data.bestRole} />
       <Section label="피해야 할 방향 ⚠️" content={data.warning} accent="var(--red)" />
-      <Section label="장기 성장 방향 (Saturn)" content={data.longterm} accent="var(--violet)" />
+      <Section label="장기 성장 방향" content={data.longterm} accent="var(--violet)" />
     </motion.div>
   );
 }

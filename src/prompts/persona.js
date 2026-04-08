@@ -1,43 +1,50 @@
-'use strict';
+﻿'use strict';
 
 /**
- * Build prompts for "나의 사회적 가면 vs 실제 속마음" analysis.
- * Analyzes: ASC sign, Moon sign+house, Sun sign
+ * Build prompts for persona analysis.
+ * Analyzes: 상승궁, 달, 태양
  */
 function buildPersonaPrompts(chart) {
   const asc = chart.angles.ascendant;
-  const moon = chart.planets.find(p => p.name === 'Moon');
-  const sun = chart.planets.find(p => p.name === 'Sun');
+  const moon = chart.planets.find((p) => p.name === 'Moon');
+  const sun = chart.planets.find((p) => p.name === 'Sun');
 
   const chartSummary = {
-    ascendant: asc ? `${asc.sign} ${asc.degree.toFixed(1)}°` : 'unknown',
-    moon: moon ? `${moon.sign} ${moon.degree.toFixed(1)}° in House ${moon.house}` : 'unknown',
-    sun: sun ? `${sun.sign} ${sun.degree.toFixed(1)}° in House ${sun.house}` : 'unknown',
+    ascendant: asc ? `${asc.sign} ${asc.degree.toFixed(1)}도` : '미상',
+    moon: moon ? `${moon.sign} ${moon.degree.toFixed(1)}도, ${moon.house}하우스` : '미상',
+    sun: sun ? `${sun.sign} ${sun.degree.toFixed(1)}도, ${sun.house}하우스` : '미상',
   };
 
-  const system = `당신은 서양 점성술 전문가이자 심리 분석가입니다.
-사용자의 나탈 차트를 분석하여 사회적 가면(페르소나)과 내면의 실제 자아를 심층 분석합니다.
-반드시 순수한 JSON만 반환하세요. 마크다운, 코드블록, 설명 텍스트 없이 JSON 객체만 출력하세요.
+  const system = `당신은 사람의 겉모습과 내면을 부드럽고 이해하기 쉽게 풀어주는 성향 분석가입니다.
+점성술 데이터는 참고용으로만 사용하고, 최종 답변은 점성술을 모르는 사람도 편하게 읽을 수 있는 쉬운 한국어로 작성하세요.
+이 분석은 "타고난 성향"과 "평소 모습"을 설명하는 탭입니다.
+
+반드시 지킬 규칙:
+1. 영어 행성명이나 영어 점성술 용어를 쓰지 마세요.
+2. 태양, 달, 상승궁처럼 한글 표현만 사용하세요.
+3. 이 사람의 평소 성향, 원래 기질, 기본 패턴을 설명하세요.
+4. "오늘", "요즘", "최근", "현재 시기", "지금은" 같은 시기 표현은 쓰지 마세요.
+5. 어렵고 단정적인 말보다 공감되는 설명을 우선하세요.
+6. 반드시 JSON만 반환하세요.
 
 출력 형식:
 {
-  "title": "겉모습 vs 속마음",
-  "mask": "ASC 기반 사회적 겉모습 설명 (2-3문장)",
-  "inner": "Moon 기반 내면의 속마음 설명 (2-3문장)",
-  "gap": "두 자아 사이의 간극과 방어기제 분석 (2-3문장)",
-  "advice": "한 줄 위로의 메시지"
+  "title": "겉모습과 속마음",
+  "mask": "겉으로 보이는 인상 설명",
+  "inner": "내면의 감정과 진짜 마음 설명",
+  "gap": "겉과 속의 차이, 방어적인 모습 설명",
+  "advice": "자신을 이해하는 데 도움이 되는 짧은 한마디"
 }`;
 
-  const user = `다음 나탈 차트 데이터로 분석해주세요:
+  const user = `다음 정보를 바탕으로 성향을 분석해주세요.
 
-- 상승궁(ASC): ${chartSummary.ascendant}
-- 달(Moon): ${chartSummary.moon}
-- 태양(Sun): ${chartSummary.sun}
+- 상승궁: ${chartSummary.ascendant}
+- 달: ${chartSummary.moon}
+- 태양: ${chartSummary.sun}
 
-사람들이 처음 보는 ${chartSummary.ascendant} 상승궁의 겉모습,
-${chartSummary.moon}에 있는 달이 보여주는 진짜 감정과 내면의 필요,
-그리고 둘 사이의 간극에서 오는 방어기제를 분석하세요.
-따뜻하고 공감적인 톤으로 작성하되, 심리적으로 날카롭게 분석하세요.`;
+사람들이 처음 느끼는 인상, 혼자 있을 때의 감정, 겉과 속이 다르게 보일 수 있는 지점을 쉬운 말로 설명해주세요.
+반드시 평소 성향 기준으로만 설명하고, 오늘이나 최근 흐름처럼 들리는 표현은 쓰지 마세요.
+영어 표현 없이 자연스러운 한국어만 사용해주세요.`;
 
   return { system, user };
 }

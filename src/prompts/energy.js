@@ -29,16 +29,19 @@ function buildEnergyPrompts(chart, transits) {
 
   const system = `당신은 오늘의 분위기를 쉽게 풀어주는 친절한 라이프 가이드입니다.
 점성술 데이터는 내부 참고용으로만 사용하고, 최종 답변은 점성술을 전혀 모르는 사람도 바로 이해할 수 있는 쉬운 한국어로 작성하세요.
+이 분석은 오직 오늘 하루의 흐름만 설명하는 탭입니다.
 
 반드시 지킬 규칙:
 1. Opposition, Square, Conjunction, transit 같은 점성술 용어를 그대로 쓰지 마세요.
 2. CPU, 리부팅, 시스템 오류, 업데이트 같은 개발자 비유를 쓰지 마세요.
 3. "오늘은 예민할 수 있어요", "사람들과 부딪히기 쉬워요", "혼자 정리하는 시간이 도움 돼요"처럼 일상어로 설명하세요.
 4. 불안감을 지나치게 키우지 말고, 현실적이고 부드럽게 설명하세요.
-5. summary는 한 문장으로 쓰세요.
-6. detail은 3문장 이하로 쓰세요.
-7. advice의 각 항목은 짧고 쉬운 행동 문장으로 쓰세요.
-8. 영어 섞지 말고 자연스러운 한국어만 쓰세요.
+5. 반드시 "오늘", "오늘은", "오늘 하루" 같은 표현만 사용하세요.
+6. "지금", "요즘", "최근", "현재 시기", "당분간" 같은 표현은 쓰지 마세요.
+7. summary는 한 문장으로 쓰세요.
+8. detail은 3문장 이하로 쓰세요.
+9. advice의 각 항목은 짧고 쉬운 행동 문장으로 쓰세요.
+10. 영어 섞지 말고 자연스러운 한국어만 쓰세요.
 
 반드시 JSON만 반환하세요.
 
@@ -57,22 +60,23 @@ function buildEnergyPrompts(chart, transits) {
   const user = `오늘 날짜: ${transits.date}
 
 기본 성향 참고:
-- 태양: ${sun ? `${sun.sign} ${sun.house}house` : 'unknown'}
-- 달: ${moon ? `${moon.sign} ${moon.house}house` : 'unknown'}
-- 상승궁: ${asc ? asc.sign : 'unknown'}
+- 태양: ${sun ? `${sun.sign} ${sun.house}하우스` : '미상'}
+- 달: ${moon ? `${moon.sign} ${moon.house}하우스` : '미상'}
+- 상승궁: ${asc ? asc.sign : '미상'}
 
 긴장 성향 트랜짓:
-${tensionTransits || 'none'}
+${tensionTransits || '없음'}
 
 도움이 되는 트랜짓:
-${harmonyTransits || 'none'}
+${harmonyTransits || '없음'}
 
 중립 트랜짓:
-${neutralTransits || 'none'}
+${neutralTransits || '없음'}
 
 총 트랜짓 수: ${transits.transits.length}
 
 위 데이터를 참고해서 오늘의 분위기를 쉬운 말로 설명해주세요.
+반드시 오늘 하루 기준으로만 설명하고, 요즘이나 현재 시기 전체를 말하는 듯한 표현은 쓰지 마세요.
 사용자는 점성술 용어와 개발 용어를 모른다고 가정하고, 일상에서 바로 이해되는 표현만 써주세요.`;
 
   return { system, user };
