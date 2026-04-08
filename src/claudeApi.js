@@ -103,12 +103,18 @@ async function callClaude(system, user, options = {}) {
   ];
   let currentTemperature = temperature;
   let lastError = null;
+  let lastSanitizedResponse = null;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      return await request(messages, currentTemperature);
+      const response = await request(messages, currentTemperature);
+      lastSanitizedResponse = response;
+      return response;
     } catch (err) {
       lastError = err;
+      if (err.sanitized) {
+        lastSanitizedResponse = err.sanitized;
+      }
 
       if (attempt >= maxAttempts) {
         break;
@@ -137,6 +143,11 @@ ${JSON.stringify(err.sanitized)}`,
 
       currentTemperature = 0.55;
     }
+  }
+
+  if (lastSanitizedResponse) {
+    console.warn('Groq response validation failed; returning best-effort response:', lastError?.message || 'unknown error');
+    return lastSanitizedResponse;
   }
 
   console.error('Groq response generation failed:', lastError?.message || 'unknown error');
