@@ -90,7 +90,20 @@ function buildKoreanOnlyRules(subjectLabel = '이분') {
   ];
 }
 
+function buildDirectReadingRules(subjectLabel = '이분') {
+  return [
+    `${subjectLabel}을 예쁘게 포장해 위로만 하지 말고, 핵심 문제를 정확하게 짚어주세요.`,
+    '말투는 친한데 실력 있는 전문가처럼, 단정하고 자신감 있게 유지하세요.',
+    '추상적인 위로나 감성적인 문장으로 끝내지 말고 반드시 이유와 해결책까지 설명하세요.',
+    '강점만 말하지 말고 부족한 점, 막히는 패턴, 반복되는 문제도 분명하게 설명하세요.',
+    '표현은 흐리지 말고 선명하게 쓰세요. 애매한 공감 표현보다 실제 행동 패턴을 짚어주세요.',
+    '비유는 좋지만 한 문장 안에서 강하게 쓰고, 흔한 힐링 문구처럼 쓰지 마세요.',
+    '사용자가 읽고 "왜 이런지 알겠다"와 "그래서 뭘 해야 할지 알겠다"를 동시에 느끼게 쓰세요.',
+  ];
+}
+
 module.exports = {
+  buildDirectReadingRules,
   buildKoreanOnlyRules,
   formatDegree,
   formatHouseSign,
