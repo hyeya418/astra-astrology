@@ -21,8 +21,10 @@ function getClient() {
  */
 async function callClaude(system, user) {
   const client = getClient();
+  // 모델 우선순위: lite → 2.5-flash → 3-flash-preview
+  const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
   const model = client.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: MODEL,
     systemInstruction: system,
   });
 

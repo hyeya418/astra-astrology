@@ -21,7 +21,8 @@
       "Bash(where git:*)",
       "WebFetch(domain:astra-astrology-rust.vercel.app)",
       "WebFetch(domain:astra-astrology.onrender.com)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "WebFetch(domain:ai.google.dev)"
     ]
   }
 }
