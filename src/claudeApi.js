@@ -1,34 +1,35 @@
 'use strict';
 
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 
 let _client = null;
 
 function getClient() {
   if (!_client) {
-    _client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    _client = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return _client;
 }
 
 /**
- * Call Gemini API and parse JSON response.
+ * Call Groq API and parse JSON response.
  * Retries once if JSON parsing fails.
- *
- * @param {string} system - System prompt
- * @param {string} user - User prompt
- * @returns {object} Parsed JSON result
  */
 async function callClaude(system, user) {
   const client = getClient();
-  const model = client.getGenerativeModel({
-    model: 'gemini-2.5-flash',
-    systemInstruction: system,
-  });
 
   async function attempt() {
-    const result = await model.generateContent(user);
-    const text = result.response.text().trim();
+    const completion = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: user },
+      ],
+      temperature: 0.8,
+      max_tokens: 4096,
+    });
+
+    const text = completion.choices[0].message.content.trim();
 
     // Strip markdown code blocks if present
     const jsonText = text
@@ -43,11 +44,10 @@ async function callClaude(system, user) {
   try {
     return await attempt();
   } catch (err) {
-    // Retry once
     try {
       return await attempt();
     } catch (retryErr) {
-      throw new Error(`Gemini API JSON parse failed after retry: ${retryErr.message}`);
+      throw new Error(`Groq API JSON parse failed after retry: ${retryErr.message}`);
     }
   }
 }
