@@ -22,7 +22,7 @@ function getClient() {
 async function callClaude(system, user) {
   const client = getClient();
   const model = client.getGenerativeModel({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-1.5-flash',
     systemInstruction: system,
   });
 

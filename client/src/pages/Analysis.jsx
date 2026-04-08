@@ -270,15 +270,25 @@ export default function Analysis() {
     if (!stored) { navigate('/input'); return; }
     const fd = JSON.parse(stored);
     setFormData(fd);
-    fetchFortune(fd);
+
+    // 캐시 확인 — 같은 출생 데이터면 API 재호출 안 함
+    const cacheKey = `fortune_${fd.year}_${fd.month}_${fd.day}_${fd.hour}_${fd.minute}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      setFortune(JSON.parse(cached));
+      return;
+    }
+    fetchFortune(fd, cacheKey);
   }, []);
 
-  async function fetchFortune(fd) {
+  async function fetchFortune(fd, cacheKey) {
     setFortuneLoading(true);
     setFortuneError(null);
     try {
       const result = await getFortuneAnalysis(fd);
       setFortune(result);
+      // 결과 캐시 저장
+      if (cacheKey) sessionStorage.setItem(cacheKey, JSON.stringify(result));
     } catch (err) {
       setFortuneError(err.message);
     } finally {
@@ -366,7 +376,10 @@ export default function Analysis() {
                 <div style={{ padding: '1rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
                   {fortuneError}
                   <br />
-                  <button className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }} onClick={() => fetchFortune(formData)}>
+                  <button className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }} onClick={() => {
+                    const ck = formData ? `fortune_${formData.year}_${formData.month}_${formData.day}_${formData.hour}_${formData.minute}` : null;
+                    fetchFortune(formData, ck);
+                  }}>
                     다시 시도
                   </button>
                 </div>
