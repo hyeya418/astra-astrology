@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import StarBackground from '../components/StarBackground';
 import { LoadingSpinner } from '../components/ReportCard';
 import { getFortuneAnalysis, getSynastryAnalysis } from '../api/chartApi';
 
 const SECTIONS = [
-  { key: '총운',         icon: '✦', accent: 'var(--gold)' },
-  { key: '금전운',       icon: '◈', accent: '#4ade80' },
-  { key: '직업운',       icon: '⬡', accent: 'var(--violet)' },
-  { key: '연애결혼운',   icon: '♥', accent: '#f472b6' },
-  { key: '건강운',       icon: '◉', accent: '#38bdf8' },
-  { key: '인간관계가족운', icon: '⬟', accent: '#fb923c' },
-  { key: '대운',         icon: '★', accent: 'var(--gold)' },
+  { key: '총운', icon: '✦', accent: 'var(--gold)' },
+  { key: '금전운', icon: '￦', accent: '#4ade80' },
+  { key: '직업운', icon: '◈', accent: 'var(--violet)' },
+  { key: '연애결혼운', icon: '♥', accent: '#f472b6' },
+  { key: '건강운', icon: '☼', accent: '#38bdf8' },
+  { key: '인간관계사회운', icon: '☍', accent: '#fb923c' },
+  { key: '미래운', icon: '➤', accent: 'var(--gold)' },
 ];
 
 function FortuneSection({ section, data, index }) {
@@ -23,112 +23,76 @@ function FortuneSection({ section, data, index }) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.07 }}
+      transition={{ delay: index * 0.06 }}
       style={{
         borderRadius: 12,
-        border: `1px solid ${open ? section.accent + '44' : 'var(--border)'}`,
-        background: open ? `${section.accent}08` : 'rgba(255,255,255,0.02)',
+        border: `1px solid ${open ? `${section.accent}55` : 'var(--border)'}`,
+        background: open ? `${section.accent}10` : 'rgba(255,255,255,0.02)',
         overflow: 'hidden',
-        transition: 'all 0.3s ease',
-        marginBottom: '0.75rem',
+        marginBottom: '0.85rem',
       }}
     >
-      {/* Header */}
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((prev) => !prev)}
         style={{
           width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           padding: '1.1rem 1.25rem',
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',
-          gap: '0.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           textAlign: 'left',
+          gap: '1rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flex: 1 }}>
-          <span style={{ fontSize: '1.1rem', color: section.accent, marginTop: '2px', flexShrink: 0 }}>{section.icon}</span>
+        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'flex-start', flex: 1 }}>
+          <span style={{ color: section.accent, fontSize: '1.15rem', lineHeight: 1.2 }}>{section.icon}</span>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <span style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.78rem',
-                color: section.accent,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                fontWeight: 500,
-              }}>
-                {section.key}
-              </span>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ color: section.accent, fontSize: '0.78rem', letterSpacing: '0.1em' }}>{section.key}</span>
               {data.keyword && (
                 <span style={{
-                  fontSize: '0.78rem',
-                  padding: '2px 9px',
-                  borderRadius: 20,
+                  padding: '2px 8px',
+                  borderRadius: 999,
                   border: `1px solid ${section.accent}55`,
                   color: section.accent,
+                  fontSize: '0.78rem',
                 }}>
                   {data.keyword}
                 </span>
               )}
             </div>
-            {data.title && (
-              <div style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.25rem',
-                color: 'var(--text)',
-                marginTop: '0.2rem',
-                lineHeight: 1.35,
-              }}>
-                {data.title}
-              </div>
-            )}
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', marginTop: '0.15rem' }}>
+              {data.title}
+            </div>
           </div>
         </div>
-        <span style={{
-          color: 'var(--text-muted)',
-          fontSize: '0.8rem',
-          transition: 'transform 0.3s',
-          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-          display: 'inline-block',
-          flexShrink: 0,
-        }}>
-          ▾
-        </span>
+        <span style={{ color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>⌄</span>
       </button>
 
-      {/* Content */}
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
-            key="body"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
             style={{ overflow: 'hidden' }}
           >
             <div style={{ padding: '0 1.25rem 1.25rem' }}>
-              <p style={{
-                color: 'var(--text)',
-                lineHeight: 1.9,
-                fontSize: '1rem',
-                marginBottom: data.advice ? '1rem' : 0,
-              }}>
+              <p style={{ lineHeight: 1.9, fontSize: '1rem', color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                 {data.content}
               </p>
               {data.advice && (
                 <div style={{
-                  padding: '0.85rem 1.1rem',
-                  background: `${section.accent}0f`,
-                  border: `1px solid ${section.accent}33`,
-                  borderRadius: 8,
+                  marginTop: '1rem',
+                  padding: '0.95rem 1.05rem',
+                  borderRadius: 10,
+                  background: `${section.accent}12`,
+                  border: `1px solid ${section.accent}35`,
                   color: section.accent,
-                  fontSize: '1rem',
-                  fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
                 }}>
                   {data.advice}
@@ -143,62 +107,88 @@ function FortuneSection({ section, data, index }) {
 }
 
 function SynastryForm({ onSubmit, loading }) {
-  const [partner, setPartner] = useState({ date: '', time: '', location: '' });
+  const [partner, setPartner] = useState({ name: '', date: '', time: '', location: '' });
   const [geoError, setGeoError] = useState('');
 
   async function geocode(query) {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
     const res = await fetch(url, { headers: { 'Accept-Language': 'ko' } });
     const results = await res.json();
-    if (!results.length) throw new Error('위치를 찾을 수 없어요.');
+    if (!results.length) throw new Error('위치를 찾을 수 없어요. 다시 시도해주세요.');
     return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setGeoError('');
-    if (!partner.date || !partner.time || !partner.location) {
-      setGeoError('모든 항목을 입력해 주세요.');
+
+    if (!partner.name || !partner.date || !partner.time || !partner.location) {
+      setGeoError('모든 항목을 입력해주세요.');
       return;
     }
+
     let geo;
-    try { geo = await geocode(partner.location); }
-    catch (err) { setGeoError(err.message); return; }
+    try {
+      geo = await geocode(partner.location);
+    } catch (err) {
+      setGeoError(err.message);
+      return;
+    }
+
     const [year, month, day] = partner.date.split('-').map(Number);
     const [hour, minute] = partner.time.split(':').map(Number);
-    onSubmit({ year, month, day, hour, minute, second: 0, lat: geo.lat, lon: geo.lon, timezone: Math.round(geo.lon / 15) });
+
+    onSubmit({
+      name: partner.name.trim(),
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second: 0,
+      lat: geo.lat,
+      lon: geo.lon,
+      timezone: Math.round(geo.lon / 15),
+    });
   }
 
+  const fields = [
+    { label: '이름', key: 'name', type: 'text', placeholder: '예: 김지혜' },
+    { label: '생년월일', key: 'date', type: 'date' },
+    { label: '출생 시간', key: 'time', type: 'time' },
+    { label: '출생지', key: 'location', type: 'text', placeholder: '예: 서울 강남구' },
+  ];
+
   return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="card" style={{ padding: 'clamp(1.5rem,5vw,2rem)', maxWidth: 480, margin: '0 auto' }}>
-      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: '#f472b6', marginBottom: '0.4rem' }}>
-        ♥ 궁합 분석
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card" style={{ padding: 'clamp(1.5rem,5vw,2rem)', maxWidth: 480, margin: '0 auto' }}>
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: '#f472b6', marginBottom: '0.35rem' }}>
+        궁합 분석
       </h3>
-      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
-        상대방 출생 정보를 입력하면 두 사람의 궁합을 분석해드려요
+      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+        상대방 정보를 입력하면 두 사람의 기본 관계 패턴을 분석해드려요.
       </p>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {[
-          { label: '생년월일', key: 'date', type: 'date' },
-          { label: '출생 시간', key: 'time', type: 'time' },
-          { label: '출생지', key: 'location', type: 'text', placeholder: '예: 서울특별시' },
-        ].map(({ label, key, type, placeholder }) => (
+        {fields.map(({ label, key, type, placeholder }) => (
           <div key={key}>
-            <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#f472b6', marginBottom: '0.4rem' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', letterSpacing: '0.12em', color: '#f472b6', marginBottom: '0.4rem' }}>
               {label}
             </label>
-            <input type={type} value={partner[key]} placeholder={placeholder}
-              onChange={e => setPartner(p => ({ ...p, [key]: e.target.value }))}
-              style={{ colorScheme: 'dark' }} />
+            <input
+              type={type}
+              value={partner[key]}
+              placeholder={placeholder}
+              onChange={(e) => setPartner((prev) => ({ ...prev, [key]: e.target.value }))}
+              style={{ colorScheme: 'dark' }}
+              required
+            />
           </div>
         ))}
         {geoError && (
-          <div style={{ padding: '0.7rem 1rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, color: 'var(--red)', fontSize: '0.875rem' }}>
+          <div style={{ padding: '0.8rem 1rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, color: 'var(--red)', fontSize: '0.875rem' }}>
             {geoError}
           </div>
         )}
-        <button type="submit" className="btn btn-gold" disabled={loading} style={{ padding: '0.85rem', marginTop: '0.25rem' }}>
+        <button type="submit" className="btn btn-gold" disabled={loading} style={{ padding: '0.9rem', marginTop: '0.25rem' }}>
           {loading ? '분석 중...' : '궁합 분석하기'}
         </button>
       </form>
@@ -212,39 +202,45 @@ function SynastryResult({ data, onReset }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="card" style={{ padding: '2rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.75rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: '#f472b6' }}>
-          ♥ 궁합 분석 결과
-        </h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: '#f472b6' }}>궁합 분석 결과</h2>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', fontFamily: 'var(--font-display)', color: scoreColor, lineHeight: 1 }}>{score}</div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>SCORE</div>
+          <div style={{ fontSize: '2.4rem', color: scoreColor, lineHeight: 1, fontFamily: 'var(--font-display)' }}>{score}</div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>SCORE</div>
         </div>
       </div>
+
       {data.redFlags?.length > 0 && (
         <div style={{ marginBottom: '1.25rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--red)', marginBottom: '0.6rem' }}>🚩 주의할 점</div>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            {data.redFlags.map((f, i) => (
-              <li key={i} style={{ padding: '0.55rem 0.9rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 6, color: 'var(--text)', fontSize: '0.88rem' }}>{f}</li>
+          <div style={{ color: 'var(--red)', fontSize: '0.76rem', letterSpacing: '0.12em', marginBottom: '0.55rem' }}>조심할 점</div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.5rem' }}>
+            {data.redFlags.map((item, index) => (
+              <li key={index} style={{ padding: '0.7rem 0.9rem', borderRadius: 8, background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
+                {item}
+              </li>
             ))}
           </ul>
         </div>
       )}
+
       {data.greenFlags?.length > 0 && (
         <div style={{ marginBottom: '1.25rem' }}>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4ade80', marginBottom: '0.6rem' }}>✅ 좋은 점</div>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            {data.greenFlags.map((f, i) => (
-              <li key={i} style={{ padding: '0.55rem 0.9rem', background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: 6, color: 'var(--text)', fontSize: '0.88rem' }}>{f}</li>
+          <div style={{ color: '#4ade80', fontSize: '0.76rem', letterSpacing: '0.12em', marginBottom: '0.55rem' }}>좋은 점</div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.5rem' }}>
+            {data.greenFlags.map((item, index) => (
+              <li key={index} style={{ padding: '0.7rem 0.9rem', borderRadius: 8, background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)' }}>
+                {item}
+              </li>
             ))}
           </ul>
         </div>
       )}
-      <div style={{ padding: '1rem 1.25rem', background: 'rgba(244,114,182,0.06)', border: '1px solid rgba(244,114,182,0.25)', borderRadius: 8, fontFamily: 'var(--font-display)', fontSize: '1.05rem', color: '#f472b6', fontStyle: 'italic', marginBottom: '1.25rem' }}>
+
+      <div style={{ padding: '1rem 1.1rem', borderRadius: 10, background: 'rgba(244,114,182,0.08)', border: '1px solid rgba(244,114,182,0.25)', color: '#f472b6', fontStyle: 'italic', marginBottom: '1rem' }}>
         {data.verdict}
       </div>
-      <button className="btn btn-outline" style={{ fontSize: '0.8rem' }} onClick={onReset}>다른 사람과 분석하기</button>
+
+      <button className="btn btn-outline" onClick={onReset}>다른 사람과 다시 분석하기</button>
     </motion.div>
   );
 }
@@ -252,34 +248,33 @@ function SynastryResult({ data, onReset }) {
 export default function Analysis() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null);
-
-  // Fortune state
   const [fortune, setFortune] = useState(null);
   const [fortuneLoading, setFortuneLoading] = useState(false);
   const [fortuneError, setFortuneError] = useState(null);
-
-  // Synastry state
   const [synastry, setSynastry] = useState(null);
   const [synastryLoading, setSynastryLoading] = useState(false);
   const [synastryError, setSynastryError] = useState(null);
-
-  const [activeTab, setActiveTab] = useState('fortune'); // 'fortune' | 'synastry'
+  const [activeTab, setActiveTab] = useState('fortune');
 
   useEffect(() => {
     const stored = sessionStorage.getItem('formData');
-    if (!stored) { navigate('/input'); return; }
+    if (!stored) {
+      navigate('/input');
+      return;
+    }
+
     const fd = JSON.parse(stored);
     setFormData(fd);
 
-    // 캐시 확인 — 같은 출생 데이터면 API 재호출 안 함
-    const cacheKey = `fortune_${fd.year}_${fd.month}_${fd.day}_${fd.hour}_${fd.minute}`;
+    const cacheKey = `fortune_${fd.name || 'noname'}_${fd.year}_${fd.month}_${fd.day}_${fd.hour}_${fd.minute}`;
     const cached = sessionStorage.getItem(cacheKey);
     if (cached) {
       setFortune(JSON.parse(cached));
       return;
     }
+
     fetchFortune(fd, cacheKey);
-  }, []);
+  }, [navigate]);
 
   async function fetchFortune(fd, cacheKey) {
     setFortuneLoading(true);
@@ -287,7 +282,6 @@ export default function Analysis() {
     try {
       const result = await getFortuneAnalysis(fd);
       setFortune(result);
-      // 결과 캐시 저장
       if (cacheKey) sessionStorage.setItem(cacheKey, JSON.stringify(result));
     } catch (err) {
       setFortuneError(err.message);
@@ -315,51 +309,48 @@ export default function Analysis() {
     <div style={{ minHeight: '100dvh', position: 'relative', paddingBottom: '4rem' }}>
       <StarBackground />
 
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          position: 'sticky', top: 0, zIndex: 10,
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
           padding: '1rem 1.5rem',
           borderBottom: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           backdropFilter: 'blur(12px)',
           background: 'rgba(10,10,15,0.85)',
         }}
       >
-        <button onClick={() => navigate('/chart')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-          ← 차트로
+        <button onClick={() => navigate('/chart')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.8rem' }}>
+          차트로
         </button>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', letterSpacing: '0.15em' }}>AI 운세 리포트</span>
-        <div style={{ width: 60 }} />
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', letterSpacing: '0.12em' }}>AI 리포트</span>
+        <div style={{ width: 56 }} />
       </motion.div>
 
       <div className="container" style={{ position: 'relative', zIndex: 1, paddingTop: '1.5rem' }}>
-
-        {/* Tab switcher */}
-        <div style={{
-          display: 'flex', gap: '0.25rem', marginBottom: '1.75rem',
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid var(--border)',
-          borderRadius: 8, padding: '0.25rem',
-        }}>
+        <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '0.25rem' }}>
           {[
-            { id: 'fortune', label: '✦ 운세 리포트' },
-            { id: 'synastry', label: '♥ 궁합 분석' },
-          ].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-              flex: 1,
-              padding: '0.65rem',
-              background: activeTab === tab.id ? 'rgba(201,168,76,0.12)' : 'transparent',
-              border: activeTab === tab.id ? '1px solid rgba(201,168,76,0.3)' : '1px solid transparent',
-              borderRadius: 6,
-              color: activeTab === tab.id ? 'var(--gold)' : 'var(--text-muted)',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              transition: 'all var(--transition)',
-            }}>
+            { id: 'fortune', label: '종합 운세' },
+            { id: 'synastry', label: '궁합 분석' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: 1,
+                padding: '0.7rem',
+                borderRadius: 6,
+                border: activeTab === tab.id ? '1px solid rgba(201,168,76,0.3)' : '1px solid transparent',
+                background: activeTab === tab.id ? 'rgba(201,168,76,0.12)' : 'transparent',
+                color: activeTab === tab.id ? 'var(--gold)' : 'var(--text-muted)',
+                cursor: 'pointer',
+              }}
+            >
               {tab.label}
             </button>
           ))}
@@ -367,37 +358,35 @@ export default function Analysis() {
 
         <AnimatePresence mode="wait">
           {activeTab === 'fortune' && (
-            <motion.div key="fortune"
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="fortune" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
               {fortuneLoading && <LoadingSpinner />}
               {fortuneError && (
-                <div style={{ padding: '1rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
+                <div style={{ padding: '1rem', borderRadius: 8, background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
                   {fortuneError}
                   <br />
-                  <button className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }} onClick={() => {
-                    const ck = formData ? `fortune_${formData.year}_${formData.month}_${formData.day}_${formData.hour}_${formData.minute}` : null;
-                    fetchFortune(formData, ck);
-                  }}>
+                  <button
+                    className="btn btn-outline"
+                    style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}
+                    onClick={() => {
+                      const ck = formData ? `fortune_${formData.name || 'noname'}_${formData.year}_${formData.month}_${formData.day}_${formData.hour}_${formData.minute}` : null;
+                      fetchFortune(formData, ck);
+                    }}
+                  >
                     다시 시도
                   </button>
                 </div>
               )}
-              {fortune && SECTIONS.map((s, i) => (
-                <FortuneSection key={s.key} section={s} data={fortune[s.key]} index={i} />
+              {fortune && SECTIONS.map((section, index) => (
+                <FortuneSection key={section.key} section={section} data={fortune[section.key]} index={index} />
               ))}
             </motion.div>
           )}
 
           {activeTab === 'synastry' && (
-            <motion.div key="synastry"
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="synastry" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
               {synastryLoading && <LoadingSpinner />}
               {synastryError && (
-                <div style={{ padding: '1rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
+                <div style={{ padding: '1rem', borderRadius: 8, background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
                   {synastryError}
                 </div>
               )}

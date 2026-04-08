@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StarBackground from '../components/StarBackground';
@@ -8,11 +8,10 @@ async function geocode(query) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
   const res = await fetch(url, { headers: { 'Accept-Language': 'ko' } });
   const results = await res.json();
-  if (!results.length) throw new Error('위치를 찾을 수 없어요. 다시 시도해 주세요.');
+  if (!results.length) throw new Error('위치를 찾을 수 없어요. 다시 시도해주세요.');
   return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
 }
 
-// Rough timezone from longitude
 function lonToTimezone(lon) {
   return Math.round(lon / 15);
 }
@@ -38,20 +37,21 @@ export default function InputForm() {
   const { fetchChart, loading, error } = useChart();
 
   const [form, setForm] = useState({
+    name: '',
     date: '',
     time: '',
     location: '',
   });
   const [geoError, setGeoError] = useState('');
 
-  const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   async function handleSubmit(e) {
     e.preventDefault();
     setGeoError('');
 
-    if (!form.date || !form.time || !form.location) {
-      setGeoError('모든 항목을 입력해 주세요.');
+    if (!form.name || !form.date || !form.time || !form.location) {
+      setGeoError('모든 항목을 입력해주세요.');
       return;
     }
 
@@ -67,11 +67,21 @@ export default function InputForm() {
     const [hour, minute] = form.time.split(':').map(Number);
     const timezone = lonToTimezone(geo.lon);
 
-    const formData = { year, month, day, hour, minute, second: 0, lat: geo.lat, lon: geo.lon, timezone };
+    const formData = {
+      name: form.name.trim(),
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second: 0,
+      lat: geo.lat,
+      lon: geo.lon,
+      timezone,
+    };
 
     const chart = await fetchChart(formData);
     if (chart) {
-      // Store in sessionStorage for persistence across pages
       sessionStorage.setItem('chartData', JSON.stringify(chart));
       sessionStorage.setItem('formData', JSON.stringify(formData));
       navigate('/chart');
@@ -91,7 +101,6 @@ export default function InputForm() {
       <StarBackground />
 
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 480 }}>
-        {/* Back link */}
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -103,7 +112,7 @@ export default function InputForm() {
             display: 'flex', alignItems: 'center', gap: '0.4rem',
           }}
         >
-          ← 돌아가기
+          이전으로
         </motion.button>
 
         <motion.div
@@ -121,10 +130,21 @@ export default function InputForm() {
             출생 정보 입력
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '2rem' }}>
-            정확한 출생 시간과 위치를 입력할수록 차트가 정밀해져요
+            이름과 정확한 출생 시간, 장소를 입력할수록 해석이 더 자연스럽고 정확해져요.
           </p>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div>
+              <Label>이름</Label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={set('name')}
+                placeholder="예: 김지혜"
+                required
+              />
+            </div>
+
             <div>
               <Label>생년월일</Label>
               <input
@@ -151,12 +171,13 @@ export default function InputForm() {
               <Label>출생지</Label>
               <input
                 type="text"
-                placeholder="예: 서울특별시, 경기도 광명시"
+                placeholder="예: 서울 강남구, 부산 해운대구"
                 value={form.location}
                 onChange={set('location')}
+                required
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-subtle)', marginTop: '0.4rem' }}>
-                도시명을 한국어 또는 영어로 입력해 주세요
+                도시나 지역명을 한글 또는 영어로 입력해주세요.
               </p>
             </div>
 
@@ -183,7 +204,7 @@ export default function InputForm() {
               disabled={loading}
               style={{ marginTop: '0.5rem', width: '100%', padding: '0.9rem' }}
             >
-              {loading ? '계산 중...' : '나탈 차트 계산하기'}
+              {loading ? '계산 중...' : '출생 차트 계산하기'}
             </button>
           </form>
         </motion.div>

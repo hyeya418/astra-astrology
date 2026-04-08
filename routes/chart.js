@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 const express = require('express');
 const router = express.Router();
@@ -16,6 +16,7 @@ const { buildFortunePrompts } = require('../src/prompts/fortune');
 // Helper: extract birth data from request body with defaults
 function extractBirthData(body) {
   const {
+    name = '',
     year, month, day,
     hour = 0, minute = 0, second = 0,
     lat, lon,
@@ -26,7 +27,7 @@ function extractBirthData(body) {
     throw new Error('Required fields: year, month, day, lat, lon');
   }
 
-  return { year, month, day, hour, minute, second, lat, lon, timezone };
+  return { name, year, month, day, hour, minute, second, lat, lon, timezone };
 }
 
 // POST /chart/natal
@@ -45,7 +46,7 @@ router.post('/analyze/persona', async (req, res) => {
   try {
     const input = extractBirthData(req.body);
     const chart = calcNatalChart(input);
-    const { system, user } = buildPersonaPrompts(chart);
+    const { system, user } = buildPersonaPrompts(chart, input.name);
     const result = await callClaude(system, user);
     res.json({ success: true, data: result });
   } catch (err) {
@@ -59,7 +60,7 @@ router.post('/analyze/energy', async (req, res) => {
     const input = extractBirthData(req.body);
     const chart = calcNatalChart(input);
     const transits = calcTransits(chart);
-    const { system, user } = buildEnergyPrompts(chart, transits);
+    const { system, user } = buildEnergyPrompts(chart, transits, input.name);
     const result = await callClaude(system, user);
     res.json({ success: true, data: result, transits });
   } catch (err) {
@@ -72,7 +73,7 @@ router.post('/analyze/career', async (req, res) => {
   try {
     const input = extractBirthData(req.body);
     const chart = calcNatalChart(input);
-    const { system, user } = buildCareerPrompts(chart);
+    const { system, user } = buildCareerPrompts(chart, input.name);
     const result = await callClaude(system, user);
     res.json({ success: true, data: result });
   } catch (err) {
@@ -80,13 +81,13 @@ router.post('/analyze/career', async (req, res) => {
   }
 });
 
-// POST /chart/analyze/fortune — 7가지 통합 운세
+// POST /chart/analyze/fortune
 router.post('/analyze/fortune', async (req, res) => {
   try {
     const input = extractBirthData(req.body);
     const chart = calcNatalChart(input);
     const transits = calcTransits(chart);
-    const { system, user } = buildFortunePrompts(chart, transits);
+    const { system, user } = buildFortunePrompts(chart, transits, input.name);
     const result = await callClaude(system, user);
     res.json({ success: true, data: result });
   } catch (err) {
@@ -110,7 +111,7 @@ router.post('/analyze/synastry', async (req, res) => {
     const chart2 = calcNatalChart(input2);
     const synastryAspects = calcSynastry(chart1, chart2);
 
-    const { system, user } = buildSynastryPrompts(chart1, chart2, synastryAspects);
+    const { system, user } = buildSynastryPrompts(chart1, chart2, synastryAspects, input1.name, input2.name);
     const result = await callClaude(system, user);
 
     res.json({ success: true, data: result, synastryAspects: synastryAspects.slice(0, 20) });
