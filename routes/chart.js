@@ -11,7 +11,7 @@ const { buildPersonaPrompts } = require('../src/prompts/persona');
 const { buildEnergyPrompts } = require('../src/prompts/energy');
 const { buildCareerPrompts } = require('../src/prompts/career');
 const { buildSynastryPrompts } = require('../src/prompts/synastry');
-const { buildFortunePrompts } = require('../src/prompts/fortune');
+const { buildFortunePrompts, validateFortuneResponse } = require('../src/prompts/fortune');
 
 // Helper: extract birth data from request body with defaults
 function extractBirthData(body) {
@@ -88,7 +88,11 @@ router.post('/analyze/fortune', async (req, res) => {
     const chart = calcNatalChart(input);
     const transits = calcTransits(chart);
     const { system, user } = buildFortunePrompts(chart, transits, input.name);
-    const result = await callClaude(system, user);
+    const result = await callClaude(system, user, {
+      temperature: 0.65,
+      validator: validateFortuneResponse,
+      repairInstruction: '문장을 더 단정적으로 다시 쓰고, 번역투 표현과 추상적인 위로를 지운 뒤, 각 섹션마다 핵심 진단, 원인, 반복 패턴, 해결책이 모두 들어가게 다시 작성하세요.',
+    });
     res.json({ success: true, data: result });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

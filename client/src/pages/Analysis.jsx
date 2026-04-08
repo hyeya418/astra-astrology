@@ -45,6 +45,7 @@ function FortuneSection({ section, data, index }) {
           justifyContent: 'space-between',
           textAlign: 'left',
           gap: '1rem',
+          color: 'var(--text)',
         }}
       >
         <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'flex-start', flex: 1 }}>
@@ -64,7 +65,7 @@ function FortuneSection({ section, data, index }) {
                 </span>
               )}
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', marginTop: '0.15rem' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', marginTop: '0.15rem', color: 'var(--text)' }}>
               {data.title}
             </div>
           </div>
@@ -92,8 +93,9 @@ function FortuneSection({ section, data, index }) {
                   borderRadius: 10,
                   background: `${section.accent}12`,
                   border: `1px solid ${section.accent}35`,
-                  color: section.accent,
+                  color: 'var(--text)',
                   fontStyle: 'italic',
+                  boxShadow: `inset 3px 0 0 ${section.accent}`,
                 }}>
                   {data.advice}
                 </div>
