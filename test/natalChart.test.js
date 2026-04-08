@@ -115,10 +115,10 @@ async function runTests() {
     failed++;
   }
 
-  // ── Test 4: Claude API - Persona analysis ─────────────────────────
-  console.log('\n[4] Claude API - Persona analysis');
-  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
-    console.log('  ⚠ GEMINI_API_KEY not set — skipping Gemini API test');
+  // ── Test 4: Groq API - Persona analysis ─────────────────────────
+  console.log('\n[4] Groq API - Persona analysis');
+  if (!process.env.GROQ_API_KEY) {
+    console.log('  ⚠ GROQ_API_KEY not set — skipping Groq API test');
   } else {
     try {
       const chart = calcNatalChart(TEST_INPUT);
