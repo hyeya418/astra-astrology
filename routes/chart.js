@@ -91,9 +91,11 @@ router.post('/analyze/fortune', async (req, res) => {
     const result = await callClaude(system, user, {
       temperature: 0.65,
       validator: validateFortuneResponse,
-      repairInstruction: '문장을 더 단정적으로 다시 쓰고, 번역투 표현과 추상적인 위로를 지운 뒤, 각 섹션마다 구체적인 시기(나이, 연도, 월), 패턴 설명, 실천 방법이 모두 들어가게 다시 작성하세요.',
+      repairInstruction: '_thinking 단계를 먼저 채우고, 그 결론에 근거해서 각 섹션을 다시 작성하세요. 구체적인 나이·연도·월을 반드시 포함하고, 두루뭉술한 위로 표현은 제거하세요.',
     });
-    res.json({ success: true, data: result });
+    // _thinking 필드는 내부 추론용이므로 프론트로 보내지 않음
+    const { _thinking: _omit, ...publicResult } = result;
+    res.json({ success: true, data: publicResult });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
