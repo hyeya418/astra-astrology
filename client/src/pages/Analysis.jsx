@@ -12,7 +12,7 @@ const SECTIONS = [
   { key: '조심할시기', icon: '☁', accent: '#fb923c', label: '마음 일기예보' },
   { key: '금전흐름', icon: '◈', accent: '#4ade80', label: '차곡차곡 재물운' },
   { key: '연애흐름', icon: '♥', accent: '#f472b6', label: '사랑이 머무는 계절' },
-  { key: '월별예측', icon: '◷', accent: 'var(--gold)', label: '2026년 한 달 살기 가이드' },
+  { key: '월별예측', icon: '◷', accent: 'var(--gold)', label: '2026년 가이드' },
 ];
 
 function FortuneSection({ section, data, index }) {
