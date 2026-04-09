@@ -5,7 +5,7 @@ const BASE_URL = API_ORIGIN ? `${API_ORIGIN}/chart` : '/chart';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 120000,
+  timeout: 180000,
   headers: { 'Content-Type': 'application/json' },
 });
 

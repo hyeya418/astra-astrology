@@ -58,7 +58,7 @@ async function callClaude(system, user, options = {}) {
     validator,
     repairInstruction,
     temperature = 0.8,
-    maxAttempts = 4,
+    maxAttempts = 2,
     userFacingErrorMessage = '해석을 안정적으로 생성하지 못했습니다. 잠시 후 다시 시도해주세요.',
   } = options;
 
@@ -67,7 +67,7 @@ async function callClaude(system, user, options = {}) {
       model: 'llama-3.3-70b-versatile',
       messages,
       temperature: requestTemperature,
-      max_tokens: 4096,
+      max_tokens: 6000,
     });
 
     const text = completion.choices[0].message.content.trim();
