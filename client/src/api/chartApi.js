@@ -1,8 +1,7 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/chart`
-  : '/chart';
+const API_ORIGIN = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
+const BASE_URL = API_ORIGIN ? `${API_ORIGIN}/chart` : '/chart';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -11,7 +10,9 @@ const api = axios.create({
 });
 
 function handleError(err) {
-  const msg = err.response?.data?.error ?? err.message ?? '알 수 없는 오류가 발생했습니다.';
+  const msg = err.response?.data?.error
+    ?? (err.message === 'Network Error' ? '백엔드 서버에 연결하지 못했어요. 서버가 실행 중인지 확인해주세요.' : err.message)
+    ?? '알 수 없는 오류가 발생했습니다.';
   throw new Error(msg);
 }
 

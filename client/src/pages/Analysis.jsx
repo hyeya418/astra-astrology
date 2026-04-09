@@ -6,13 +6,13 @@ import { LoadingSpinner } from '../components/ReportCard';
 import { getFortuneAnalysis, getSynastryAnalysis } from '../api/chartApi';
 
 const SECTIONS = [
-  { key: '총운', icon: '✦', accent: 'var(--gold)' },
-  { key: '금전운', icon: '￦', accent: '#4ade80' },
-  { key: '직업운', icon: '◈', accent: 'var(--violet)' },
-  { key: '연애결혼운', icon: '♥', accent: '#f472b6' },
-  { key: '건강운', icon: '☼', accent: '#38bdf8' },
-  { key: '인간관계사회운', icon: '☍', accent: '#fb923c' },
-  { key: '미래운', icon: '➤', accent: 'var(--gold)' },
+  { key: '인생변곡점', icon: '◉', accent: 'var(--gold)', label: '내 인생의 큰 파도' },
+  { key: '10년흐름', icon: '◎', accent: 'var(--violet)', label: '나의 10년 인생 지도' },
+  { key: '직업재능', icon: '✦', accent: '#38bdf8', label: '내가 빛나는 자리' },
+  { key: '조심할시기', icon: '☁', accent: '#fb923c', label: '마음 일기예보' },
+  { key: '금전흐름', icon: '◈', accent: '#4ade80', label: '차곡차곡 재물운' },
+  { key: '연애흐름', icon: '♥', accent: '#f472b6', label: '사랑이 머무는 계절' },
+  { key: '월별예측', icon: '◷', accent: 'var(--gold)', label: '2026년 한 달 살기 가이드' },
 ];
 
 function FortuneSection({ section, data, index }) {
@@ -52,7 +52,7 @@ function FortuneSection({ section, data, index }) {
           <span style={{ color: section.accent, fontSize: '1.15rem', lineHeight: 1.2 }}>{section.icon}</span>
           <div>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ color: section.accent, fontSize: '0.78rem', letterSpacing: '0.1em' }}>{section.key}</span>
+              <span style={{ color: section.accent, fontSize: '0.78rem', letterSpacing: '0.1em' }}>{section.label || section.key}</span>
               {data.keyword && (
                 <span style={{
                   padding: '2px 8px',
@@ -327,14 +327,14 @@ export default function Analysis() {
         <button onClick={() => navigate('/chart')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.8rem' }}>
           차트로
         </button>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', letterSpacing: '0.12em' }}>AI 리포트</span>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', letterSpacing: '0.12em' }}>인생 데이터 분석</span>
         <div style={{ width: 56 }} />
       </motion.div>
 
       <div className="container" style={{ position: 'relative', zIndex: 1, paddingTop: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '0.25rem' }}>
           {[
-            { id: 'fortune', label: '종합 운세' },
+            { id: 'fortune', label: '인생 분석' },
             { id: 'synastry', label: '궁합 분석' },
           ].map((tab) => (
             <button

@@ -91,7 +91,7 @@ router.post('/analyze/fortune', async (req, res) => {
     const result = await callClaude(system, user, {
       temperature: 0.65,
       validator: validateFortuneResponse,
-      repairInstruction: '문장을 더 단정적으로 다시 쓰고, 번역투 표현과 추상적인 위로를 지운 뒤, 각 섹션마다 핵심 진단, 원인, 반복 패턴, 해결책이 모두 들어가게 다시 작성하세요.',
+      repairInstruction: '문장을 더 단정적으로 다시 쓰고, 번역투 표현과 추상적인 위로를 지운 뒤, 각 섹션마다 구체적인 시기(나이, 연도, 월), 패턴 설명, 실천 방법이 모두 들어가게 다시 작성하세요.',
     });
     res.json({ success: true, data: result });
   } catch (err) {
