@@ -67,7 +67,7 @@ async function callClaude(system, user, options = {}) {
       model: 'llama-3.3-70b-versatile',
       messages,
       temperature: requestTemperature,
-      max_tokens: 6000,
+      max_tokens: 3500,
     });
 
     const text = completion.choices[0].message.content.trim();
