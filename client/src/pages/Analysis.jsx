@@ -477,23 +477,36 @@ export default function Analysis() {
                     {daily['한줄요약']}
                   </motion.div>
 
-                  {/* 3개 섹션 */}
-                  {['에너지', '집중', '조심'].map((key, i) => {
+                  {/* 6개 운세 */}
+                  {[
+                    { key: '총운',  icon: '✦', accent: 'var(--gold)' },
+                    { key: '재물운', icon: '◈', accent: '#4ade80' },
+                    { key: '연애운', icon: '♥', accent: '#f472b6' },
+                    { key: '사업운', icon: '◉', accent: '#38bdf8' },
+                    { key: '건강운', icon: '☼', accent: '#fb923c' },
+                    { key: '학업운', icon: '◎', accent: 'var(--violet)' },
+                  ].map(({ key, icon, accent }, i) => {
                     const s = daily[key];
                     if (!s) return null;
-                    const colors = { 에너지: 'var(--violet)', 집중: '#4ade80', 조심: '#fb923c' };
-                    const accent = colors[key];
+                    const score = Math.min(5, Math.max(1, Number(s.score) || 3));
                     return (
                       <motion.div
                         key={key}
                         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: (i + 1) * 0.08 }}
+                        transition={{ delay: (i + 1) * 0.07 }}
                         className="card"
-                        style={{ padding: '1.2rem 1.4rem', borderLeft: `3px solid ${accent}` }}
+                        style={{ padding: '1.1rem 1.4rem' }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                          <span style={{ fontSize: '1.3rem' }}>{s.icon}</span>
-                          <span style={{ color: accent, fontSize: '0.82rem', letterSpacing: '0.08em' }}>{s.title}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.55rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ color: accent }}>{icon}</span>
+                            <span style={{ color: accent, fontSize: '0.82rem', letterSpacing: '0.08em' }}>{key}</span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '2px' }}>
+                            {[1,2,3,4,5].map((n) => (
+                              <span key={n} style={{ fontSize: '0.85rem', color: n <= score ? accent : 'rgba(255,255,255,0.15)' }}>★</span>
+                            ))}
+                          </div>
                         </div>
                         <p style={{ lineHeight: 1.85, fontSize: '0.97rem', color: 'var(--text)', margin: 0 }}>{s.content}</p>
                       </motion.div>
