@@ -51,6 +51,13 @@ export async function getFortuneAnalysis(formData) {
   } catch (err) { handleError(err); }
 }
 
+export async function getDailyAnalysis(formData) {
+  try {
+    const { data } = await api.post('/analyze/daily', formData);
+    return data;
+  } catch (err) { handleError(err); }
+}
+
 export async function getSynastryAnalysis(person1, person2) {
   try {
     const { data } = await api.post('/analyze/synastry', { person1, person2 });

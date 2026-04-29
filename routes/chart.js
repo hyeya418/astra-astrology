@@ -12,6 +12,7 @@ const { buildEnergyPrompts } = require('../src/prompts/energy');
 const { buildCareerPrompts } = require('../src/prompts/career');
 const { buildSynastryPrompts } = require('../src/prompts/synastry');
 const { buildFortunePrompts, validateFortuneResponse } = require('../src/prompts/fortune');
+const { buildDailyPrompts, validateDailyResponse } = require('../src/prompts/daily');
 
 // Helper: extract birth data from request body with defaults
 function extractBirthData(body) {
@@ -96,6 +97,24 @@ router.post('/analyze/fortune', async (req, res) => {
     // _thinking 필드는 내부 추론용이므로 프론트로 보내지 않음
     const { _thinking: _omit, ...publicResult } = result;
     res.json({ success: true, data: publicResult });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /chart/analyze/daily
+router.post('/analyze/daily', async (req, res) => {
+  try {
+    const input = extractBirthData(req.body);
+    const chart = calcNatalChart(input);
+    const transits = calcTransits(chart);
+    const { system, user } = buildDailyPrompts(chart, transits, input.name);
+    const result = await callClaude(system, user, {
+      temperature: 0.75,
+      validator: validateDailyResponse,
+      maxAttempts: 2,
+    });
+    res.json({ success: true, data: result, date: transits.date });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

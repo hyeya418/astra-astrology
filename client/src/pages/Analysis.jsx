@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import StarBackground from '../components/StarBackground';
 import { LoadingSpinner } from '../components/ReportCard';
-import { getFortuneAnalysis, getSynastryAnalysis } from '../api/chartApi';
+import { getFortuneAnalysis, getSynastryAnalysis, getDailyAnalysis } from '../api/chartApi';
 
 const SECTIONS = [
   { key: '인생변곡점', icon: '◉', accent: 'var(--gold)', label: '내 인생의 큰 파도' },
@@ -288,6 +288,9 @@ export default function Analysis() {
   const [synastry, setSynastry] = useState(null);
   const [synastryLoading, setSynastryLoading] = useState(false);
   const [synastryError, setSynastryError] = useState(null);
+  const [daily, setDaily] = useState(null);
+  const [dailyLoading, setDailyLoading] = useState(false);
+  const [dailyError, setDailyError] = useState(null);
   const [activeTab, setActiveTab] = useState('fortune');
 
   useEffect(() => {
@@ -306,6 +309,7 @@ export default function Analysis() {
       .forEach((key) => sessionStorage.removeItem(key));
 
     fetchFortune(fd);
+    fetchDaily(fd);
   }, [navigate]);
 
   async function fetchFortune(fd) {
@@ -318,6 +322,25 @@ export default function Analysis() {
       setFortuneError(err.message);
     } finally {
       setFortuneLoading(false);
+    }
+  }
+
+  async function fetchDaily(fd) {
+    const today = new Date().toISOString().slice(0, 10);
+    const cacheKey = `daily_${today}_${fd.year}_${fd.month}_${fd.day}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) { setDaily(JSON.parse(cached)); return; }
+
+    setDailyLoading(true);
+    setDailyError(null);
+    try {
+      const result = await getDailyAnalysis(fd);
+      setDaily(result.data);
+      sessionStorage.setItem(cacheKey, JSON.stringify(result.data));
+    } catch (err) {
+      setDailyError(err.message);
+    } finally {
+      setDailyLoading(false);
     }
   }
 
@@ -367,6 +390,7 @@ export default function Analysis() {
         <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '0.25rem' }}>
           {[
             { id: 'fortune', label: '인생 분석' },
+            { id: 'daily', label: '오늘의 운세' },
             { id: 'synastry', label: '궁합 분석' },
           ].map((tab) => (
             <button
@@ -420,6 +444,68 @@ export default function Analysis() {
                     </button>
                   </div>
                 </>
+              )}
+            </motion.div>
+          )}
+
+          {activeTab === 'daily' && (
+            <motion.div key="daily" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+              {dailyLoading && <LoadingSpinner />}
+              {dailyError && (
+                <div style={{ padding: '1rem', borderRadius: 8, background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
+                  {dailyError}
+                  <br />
+                  <button className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }} onClick={() => fetchDaily(formData)}>다시 시도</button>
+                </div>
+              )}
+              {daily && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {/* 한줄 요약 배너 */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                    style={{
+                      padding: '1.1rem 1.4rem',
+                      borderRadius: 12,
+                      background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(167,139,250,0.1))',
+                      border: '1px solid rgba(201,168,76,0.3)',
+                      textAlign: 'center',
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.1rem',
+                      color: 'var(--gold)',
+                    }}
+                  >
+                    {daily['한줄요약']}
+                  </motion.div>
+
+                  {/* 3개 섹션 */}
+                  {['에너지', '집중', '조심'].map((key, i) => {
+                    const s = daily[key];
+                    if (!s) return null;
+                    const colors = { 에너지: 'var(--violet)', 집중: '#4ade80', 조심: '#fb923c' };
+                    const accent = colors[key];
+                    return (
+                      <motion.div
+                        key={key}
+                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: (i + 1) * 0.08 }}
+                        className="card"
+                        style={{ padding: '1.2rem 1.4rem', borderLeft: `3px solid ${accent}` }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                          <span style={{ fontSize: '1.3rem' }}>{s.icon}</span>
+                          <span style={{ color: accent, fontSize: '0.82rem', letterSpacing: '0.08em' }}>{s.title}</span>
+                        </div>
+                        <p style={{ lineHeight: 1.85, fontSize: '0.97rem', color: 'var(--text)', margin: 0 }}>{s.content}</p>
+                      </motion.div>
+                    );
+                  })}
+
+                  <div style={{ textAlign: 'center', paddingTop: '0.25rem' }}>
+                    <button className="btn btn-outline" style={{ fontSize: '0.8rem', opacity: 0.6 }} onClick={() => { setDaily(null); fetchDaily(formData); }}>
+                      ↺ 다시 보기
+                    </button>
+                  </div>
+                </div>
               )}
             </motion.div>
           )}
