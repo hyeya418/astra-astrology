@@ -15,6 +15,35 @@ const SECTIONS = [
   { key: '월별예측', icon: '◷', accent: 'var(--gold)', label: '2026년 가이드' },
 ];
 
+function ShareButton({ section, data }) {
+  const [copied, setCopied] = useState(false);
+
+  function handleShare() {
+    const text = `🌌 ASTRA 인생 분석\n\n${section.icon} ${section.label}\n"${data.title}"\n\n${data.content}${data.advice ? `\n\n💡 ${data.advice}` : ''}\n\n✨ astra-astrology-rust.vercel.app`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); handleShare(); }}
+      title="클립보드에 복사"
+      style={{
+        background: 'none', border: 'none', cursor: 'pointer',
+        color: copied ? section.accent : 'var(--text-muted)',
+        fontSize: '0.85rem', padding: '0.25rem 0.4rem',
+        borderRadius: 6,
+        transition: 'color 0.2s',
+        flexShrink: 0,
+      }}
+    >
+      {copied ? '✓' : '⎘'}
+    </button>
+  );
+}
+
 function FortuneSection({ section, data, index }) {
   const [open, setOpen] = useState(index === 0);
   if (!data) return null;
@@ -70,7 +99,10 @@ function FortuneSection({ section, data, index }) {
             </div>
           </div>
         </div>
-        <span style={{ color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>⌄</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
+          <ShareButton section={section} data={data} />
+          <span style={{ color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>⌄</span>
+        </div>
       </button>
 
       <AnimatePresence initial={false}>
@@ -372,9 +404,23 @@ export default function Analysis() {
                   </button>
                 </div>
               )}
-              {fortune && SECTIONS.map((section, index) => (
-                <FortuneSection key={section.key} section={section} data={fortune[section.key]} index={index} />
-              ))}
+              {fortune && (
+                <>
+                  {SECTIONS.map((section, index) => (
+                    <FortuneSection key={section.key} section={section} data={fortune[section.key]} index={index} />
+                  ))}
+                  <div style={{ textAlign: 'center', marginTop: '1.5rem', paddingBottom: '0.5rem' }}>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize: '0.8rem', opacity: 0.6 }}
+                      onClick={() => { setFortune(null); fetchFortune(formData); }}
+                      disabled={fortuneLoading}
+                    >
+                      ↺ 다시 분석하기
+                    </button>
+                  </div>
+                </>
+              )}
             </motion.div>
           )}
 

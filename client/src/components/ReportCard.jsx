@@ -79,7 +79,7 @@ export function LoadingSpinner() {
         color: 'var(--text-subtle)',
         marginTop: '-0.5rem',
       }}>
-        첫 분석은 최대 1분 정도 걸릴 수 있어요 🙏
+        분석은 최대 1분 정도 걸릴 수 있어요 🙏
       </div>
     </div>
   );

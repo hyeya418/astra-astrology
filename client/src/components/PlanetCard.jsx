@@ -12,6 +12,22 @@ const PLANET_KO = {
   Pluto: '명왕성', NorthNode: '노스노드', Lilith: '릴리스', Chiron: '카이론',
 };
 
+const PLANET_DESC = {
+  Sun: '나의 본질 · 삶의 방향 · 핵심 정체성',
+  Moon: '감정 · 무의식 · 편안함을 느끼는 방식',
+  Mercury: '사고방식 · 소통 · 정보를 처리하는 방법',
+  Venus: '사랑 · 미적 감각 · 무엇에 끌리는지',
+  Mars: '행동력 · 욕망 · 에너지를 쓰는 방식',
+  Jupiter: '성장 · 행운 · 확장되는 영역',
+  Saturn: '도전 · 책임 · 단단해지는 과정',
+  Uranus: '변화 · 반전 · 틀을 깨는 힘',
+  Neptune: '직관 · 꿈 · 이상을 향한 감수성',
+  Pluto: '변혁 · 집착 · 깊은 내면의 힘',
+  NorthNode: '이번 생의 과제 · 나아가야 할 방향',
+  Lilith: '억압된 욕망 · 본능적인 자아',
+  Chiron: '깊은 상처 · 그것을 통해 얻는 치유력',
+};
+
 export default function PlanetCard({ planet, index = 0 }) {
   return (
     <motion.div
@@ -71,6 +87,16 @@ export default function PlanetCard({ planet, index = 0 }) {
             {planet.house}하우스
           </span>
         </div>
+        {PLANET_DESC[planet.name] && (
+          <div style={{
+            fontSize: '0.75rem',
+            color: 'rgba(255,255,255,0.35)',
+            marginTop: '0.35rem',
+            lineHeight: 1.4,
+          }}>
+            {PLANET_DESC[planet.name]}
+          </div>
+        )}
       </div>
     </motion.div>
   );
