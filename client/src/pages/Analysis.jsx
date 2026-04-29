@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import StarBackground from '../components/StarBackground';
 import { LoadingSpinner } from '../components/ReportCard';
-import { getFortuneAnalysis, getSynastryAnalysis, getDailyAnalysis } from '../api/chartApi';
+import { getFortuneAnalysis, getSynastryAnalysis, getDailyAnalysis, getSajuAnalysis } from '../api/chartApi';
 
 const SECTIONS = [
   { key: '인생변곡점', icon: '◉', accent: 'var(--gold)', label: '내 인생의 큰 파도' },
@@ -291,6 +291,9 @@ export default function Analysis() {
   const [daily, setDaily] = useState(null);
   const [dailyLoading, setDailyLoading] = useState(false);
   const [dailyError, setDailyError] = useState(null);
+  const [saju, setSaju] = useState(null);
+  const [sajuLoading, setSajuLoading] = useState(false);
+  const [sajuError, setSajuError] = useState(null);
   const [activeTab, setActiveTab] = useState('fortune');
 
   useEffect(() => {
@@ -315,7 +318,28 @@ export default function Analysis() {
     if (activeTab === 'daily' && formData && !daily && !dailyLoading) {
       fetchDaily(formData);
     }
+    if (activeTab === 'saju' && formData && !saju && !sajuLoading) {
+      fetchSaju(formData);
+    }
   }, [activeTab, formData]);
+
+  async function fetchSaju(fd) {
+    const cacheKey = `saju_${fd.year}_${fd.month}_${fd.day}_${fd.hour}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) { setSaju(JSON.parse(cached)); return; }
+
+    setSajuLoading(true);
+    setSajuError(null);
+    try {
+      const result = await getSajuAnalysis(fd);
+      setSaju(result);
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+    } catch (err) {
+      setSajuError(err.message);
+    } finally {
+      setSajuLoading(false);
+    }
+  }
 
   async function fetchFortune(fd) {
     setFortuneLoading(true);
@@ -399,6 +423,7 @@ export default function Analysis() {
         <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '0.25rem' }}>
           {[
             { id: 'fortune', label: '인생 분석' },
+            { id: 'saju', label: '사주 분석' },
             { id: 'daily', label: '오늘의 운세' },
             { id: 'synastry', label: '궁합 분석' },
           ].map((tab) => (
@@ -453,6 +478,109 @@ export default function Analysis() {
                     </button>
                   </div>
                 </>
+              )}
+            </motion.div>
+          )}
+
+          {activeTab === 'saju' && (
+            <motion.div key="saju" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+              {sajuLoading && <LoadingSpinner />}
+              {sajuError && (
+                <div style={{ padding: '1rem', borderRadius: 8, background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', textAlign: 'center', marginBottom: '1rem' }}>
+                  {sajuError}
+                  <br />
+                  <button className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }} onClick={() => fetchSaju(formData)}>다시 시도</button>
+                </div>
+              )}
+              {saju && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {/* 4주 카드 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                    {saju.saju.pillars.map((p, i) => {
+                      const elementColors = { 목:'#4ade80', 화:'#f472b6', 토:'#fbbf24', 금:'#cbd5e1', 수:'#38bdf8' };
+                      const accent = elementColors[p.element] || 'var(--gold)';
+                      return (
+                        <motion.div
+                          key={p.name}
+                          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.08 }}
+                          className="card"
+                          style={{ padding: '0.85rem 0.5rem', textAlign: 'center', borderTop: `3px solid ${accent}` }}
+                        >
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>{p.name}</div>
+                          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', color: accent, marginTop: '0.3rem', lineHeight: 1.1 }}>
+                            {p.stemHanja}
+                          </div>
+                          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', color: 'var(--text)', lineHeight: 1.1 }}>
+                            {p.branchHanja}
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+                            {p.stem}{p.branch}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* 오행 분포 */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="card" style={{ padding: '1.1rem 1.4rem' }}
+                  >
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
+                      오행 분포
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      {Object.entries(saju.saju.elements).map(([el, count]) => {
+                        const elementColors = { 목:'#4ade80', 화:'#f472b6', 토:'#fbbf24', 금:'#cbd5e1', 수:'#38bdf8' };
+                        const c = elementColors[el];
+                        const max = Math.max(...Object.values(saju.saju.elements), 1);
+                        return (
+                          <div key={el} style={{ flex: 1, textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.7rem', color: c, marginBottom: 4 }}>{el}</div>
+                            <div style={{ height: 60, position: 'relative', background: 'rgba(255,255,255,0.05)', borderRadius: 4, display: 'flex', alignItems: 'flex-end' }}>
+                              <div style={{ width: '100%', height: `${(count / max) * 100}%`, background: c, opacity: 0.7, borderRadius: 4, transition: 'height 0.6s' }} />
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text)', marginTop: 4 }}>{count}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+
+                  {/* 4개 분석 섹션 */}
+                  {[
+                    { key: '일간분석', icon: '◉', accent: 'var(--gold)' },
+                    { key: '오행균형', icon: '◎', accent: 'var(--violet)' },
+                    { key: '용신',     icon: '✦', accent: '#4ade80' },
+                    { key: '세운2026', icon: '◷', accent: '#f472b6' },
+                  ].map((s, i) => {
+                    const data = saju.analysis[s.key];
+                    if (!data) return null;
+                    return (
+                      <motion.div
+                        key={s.key}
+                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 + i * 0.08 }}
+                        className="card"
+                        style={{ padding: '1.2rem 1.4rem', borderLeft: `3px solid ${s.accent}` }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                          <span style={{ color: s.accent }}>{s.icon}</span>
+                          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', color: 'var(--text)' }}>{data.title}</span>
+                        </div>
+                        <p style={{ lineHeight: 1.85, fontSize: '0.97rem', color: 'var(--text)', margin: 0, whiteSpace: 'pre-wrap' }}>{data.content}</p>
+                      </motion.div>
+                    );
+                  })}
+
+                  <div style={{ textAlign: 'center', paddingTop: '0.25rem' }}>
+                    <button className="btn btn-outline" style={{ fontSize: '0.8rem', opacity: 0.6 }} onClick={() => { setSaju(null); fetchSaju(formData); }}>
+                      ↺ 다시 분석하기
+                    </button>
+                  </div>
+                </div>
               )}
             </motion.div>
           )}

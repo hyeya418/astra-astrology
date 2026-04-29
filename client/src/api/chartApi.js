@@ -51,6 +51,13 @@ export async function getFortuneAnalysis(formData) {
   } catch (err) { handleError(err); }
 }
 
+export async function getSajuAnalysis(formData) {
+  try {
+    const { data } = await api.post('/analyze/saju', formData);
+    return data.data;
+  } catch (err) { handleError(err); }
+}
+
 export async function getDailyAnalysis(formData) {
   try {
     const { data } = await api.post('/analyze/daily', formData);
