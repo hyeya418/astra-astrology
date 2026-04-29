@@ -327,7 +327,11 @@ export default function Analysis() {
 
   async function fetchDaily(fd) {
     const today = new Date().toISOString().slice(0, 10);
-    const cacheKey = `daily_${today}_${fd.year}_${fd.month}_${fd.day}`;
+    const cacheKey = `daily_v2_${today}_${fd.year}_${fd.month}_${fd.day}`;
+    // 구버전 캐시 정리
+    Object.keys(sessionStorage)
+      .filter((k) => k.startsWith('daily_') && !k.startsWith('daily_v2'))
+      .forEach((k) => sessionStorage.removeItem(k));
     const cached = sessionStorage.getItem(cacheKey);
     if (cached) { setDaily(JSON.parse(cached)); return; }
 
