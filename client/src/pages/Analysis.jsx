@@ -303,14 +303,19 @@ export default function Analysis() {
     const fd = JSON.parse(stored);
     setFormData(fd);
 
-    // Older fortune results were cached in sessionStorage and could mask prompt changes.
     Object.keys(sessionStorage)
       .filter((key) => key.startsWith('fortune_'))
       .forEach((key) => sessionStorage.removeItem(key));
 
     fetchFortune(fd);
-    fetchDaily(fd);
   }, [navigate]);
+
+  // 오늘의 운세는 탭 클릭할 때만 호출
+  useEffect(() => {
+    if (activeTab === 'daily' && formData && !daily && !dailyLoading) {
+      fetchDaily(formData);
+    }
+  }, [activeTab, formData]);
 
   async function fetchFortune(fd) {
     setFortuneLoading(true);
